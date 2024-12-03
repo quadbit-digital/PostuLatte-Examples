@@ -1,12 +1,10 @@
 /*
-
 This is an example of a simple test that verifies the response structure and status codes. Such a test can be created using code generation tools:
 (Code editor -> Tools -> Code generation -> !!Insert server response into Input Data!! -> Json Data to Simple Response Test (C#) -> Convert).
 
 The test makes a call to the target request using the Query method, passing the PublicID of the request as an argument. It then performs checks on the status code and the response structure.
 
 For a negative test, data in the request body, headers, or parameters is intentionally modified by changing variable values (using the AddVariable method). This ensures that the target request is executed with incorrect input data. The expected result of such a test is a server response with a status code indicating a client error.
-
 */
 
 //entry point
