@@ -1,0 +1,68 @@
+/*
+
+This is an example of a simple test that verifies the response structure and status codes. Such a test can be created using code generation tools:
+(Code editor -> Tools -> Code generation -> !!Insert server response into Input Data!! -> Json Data to Simple Response Test (C#) -> Convert).
+
+The test makes a call to the target request using the Query method, passing the PublicID of the request as an argument. It then performs checks on the status code and the response structure.
+
+For a negative test, data in the request body, headers, or parameters is intentionally modified by changing variable values (using the AddVariable method). This ensures that the target request is executed with incorrect input data. The expected result of such a test is a server response with a status code indicating a client error.
+
+*/
+
+//entry point
+public async Task RunTests()
+{
+    // positive test
+    await RunPositiveTestForResponse();
+    // negative test
+    await RunNegativeTestForResponse();                                                              
+}
+
+//Target testing query template 
+private string GetQueryId() => "PUT_YOUR_TEMPLATE_ID_HERE";
+
+
+//Positive test
+public async Task RunPositiveTestForResponse()
+{
+                
+    await Testing("Test positive example", async test =>
+    {
+         var  templateResponse = await Query(GetQueryId()); 
+                               
+    
+         await test.WithStep("Status code validation")
+                   .AssertIsTrue(templateResponse.IsGood()); // Statuses 200-299
+                   
+         await test.WithStep("Response structure validation")
+                            .AssertIsValidJson(templateResponse.Body, GetJsonSchema()); 
+        
+         
+         await test.WithStep("Execution time validation (timeout 30 sec)")
+                                .AssertExecutionTime(TimeSpan.FromSeconds(30), templateResponse.ExecutionTime);
+        
+    });   
+}
+
+//Negative test
+public async Task RunNegativeTestForResponse()
+{
+  
+
+    await Testing("Test negative example", async test =>
+    {
+      var  templateResponse = await Query(GetQueryId(), // setting templateId with wrong parameters in variables
+                                              v=> v.AddVariable("PARAMETER_A","WRONG_VALUE_1"),  //name - value 1
+                                              v=> v.AddVariable("PARAMETER_B","WRONG_VALUE_2"),  //name - value 1
+                                              v=> v.AddVariable("PARAMTER_C","WRONG_VALUE_3")); //name - value ..3
+                                              
+          await test.WithStep("Status code validation")
+                               .AssertIsTrue(templateResponse.IsClientErrors()); // Statuses 400-499
+                               
+          await test.WithStep("Execution time validation (timeout 30 sec)")
+                                  .AssertExecutionTime(TimeSpan.FromSeconds(30), templateResponse.ExecutionTime);
+        
+    });   
+}
+
+public string GetJsonSchema() => "PUT YOUR JSON SCHEMA HERE";
