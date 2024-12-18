@@ -38,7 +38,7 @@ public async Task RunPositiveTestForResponse()
                    .AssertIsTrue(templateResponse.IsGood()); //Status code validation -  Statuses 400-499
                    
          await test.WithStep("Response structure validation") // Definition of a testing step with name "Response structure validation"
-                            .AssertIsValidJson(templateResponse.Body, GetJsonSchema()); // Validation of the response structure against a JSON schema
+                            .AssertIsValidJson(templateResponse.RawBody, GetJsonSchema()); // Validation of the response structure against a JSON schema
         
          
          await test.WithStep("Execution time validation (timeout 30 sec)")  // Definition of a testing step with name "Execution time validation (timeout 30 sec)"
